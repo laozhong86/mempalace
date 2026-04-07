@@ -445,6 +445,18 @@ To remove the plugin later:
 claude plugin uninstall mempalace@mempalace-dev --scope local
 ```
 
+### Codex Plugin
+
+Codex uses the plugin package at `.codex-plugin/plugin.json` and discovers local installs through `.agents/plugins/marketplace.json`.
+
+For local development of this repo:
+
+```bash
+bash scripts/install-codex-plugin.sh
+```
+
+That writes `~/.agents/plugins/marketplace.json` with a repo-local source path so Codex can install the plugin into its cache. The plugin package keeps the manifest and MCP wiring in the repository, while the runtime scripts resolve the correct plugin root for either Codex or Claude.
+
 ### 19 Tools
 
 **Palace (read)**

@@ -44,7 +44,9 @@ def test_codex_archived_jsonl():
             "payload": {
                 "type": "message",
                 "role": "assistant",
-                "content": [{"type": "output_text", "text": "Use the archived session JSONL files."}],
+                "content": [
+                    {"type": "output_text", "text": "Use the archived session JSONL files."}
+                ],
             },
         },
     ]

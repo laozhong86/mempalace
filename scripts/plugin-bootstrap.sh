@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-PLUGIN_DATA="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins-data/mempalace}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/plugin-runtime.sh"
+
+PLUGIN_ROOT="$(plugin_runtime_resolve_root)"
+PLUGIN_DATA="$(plugin_runtime_resolve_data_dir)"
 RUNTIME_DIR="$PLUGIN_DATA/runtime"
 VENV_DIR="$RUNTIME_DIR/venv"
 LOG_DIR="$PLUGIN_DATA/logs"
@@ -11,9 +14,17 @@ STAMP_FILE="$RUNTIME_DIR/install-stamp"
 
 mkdir -p "$LOG_DIR" "$RUNTIME_DIR"
 
-PYTHON_CMD="${MEMPALACE_PYTHON_COMMAND:-${CLAUDE_PLUGIN_OPTION_PYTHON_COMMAND:-python3}}"
+PYTHON_CMD="$(
+  plugin_runtime_first_set \
+    MEMPALACE_PYTHON_COMMAND \
+    CLAUDE_PLUGIN_OPTION_PYTHON_COMMAND \
+    CODEX_PLUGIN_OPTION_PYTHON_COMMAND \
+  || printf 'python3'
+)"
 
-PLUGIN_VERSION="$("$PYTHON_CMD" - <<'PY' "$PLUGIN_ROOT/.claude-plugin/plugin.json"
+PLUGIN_MANIFEST="$(plugin_runtime_resolve_manifest_path)"
+
+PLUGIN_VERSION="$("$PYTHON_CMD" - <<'PY' "$PLUGIN_MANIFEST"
 import json
 import pathlib
 import sys
@@ -41,7 +52,7 @@ if [[ "$need_install" == "1" ]]; then
   "$PYTHON_CMD" -m venv "$VENV_DIR" >>"$LOG_FILE" 2>&1
   "$VENV_DIR/bin/python" -m pip install --upgrade pip >>"$LOG_FILE" 2>&1
   "$VENV_DIR/bin/python" -m pip install -e "$PLUGIN_ROOT" >>"$LOG_FILE" 2>&1
-  printf '%s|%s' "$PLUGIN_VERSION" "$PLUGIN_ROOT" > "$STAMP_FILE"
+  printf '%s|%s\n' "$PLUGIN_VERSION" "$PLUGIN_ROOT" > "$STAMP_FILE"
 fi
 
 printf '%s\n' "$VENV_DIR/bin/python"

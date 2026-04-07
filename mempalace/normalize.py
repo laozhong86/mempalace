@@ -244,7 +244,11 @@ def _extract_content(content) -> str:
         for item in content:
             if isinstance(item, str):
                 parts.append(item)
-            elif isinstance(item, dict) and item.get("type") in ("text", "output_text", "input_text"):
+            elif isinstance(item, dict) and item.get("type") in (
+                "text",
+                "output_text",
+                "input_text",
+            ):
                 parts.append(item.get("text", ""))
         return " ".join(parts).strip()
     if isinstance(content, dict):
