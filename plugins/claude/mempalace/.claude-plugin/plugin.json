@@ -1,0 +1,31 @@
+{
+  "name": "mempalace",
+  "version": "3.1.2",
+  "description": "Project memory for Claude Code with MemPalace MCP, wake-up context, and save hooks.",
+  "userConfig": {
+    "palace_path": {
+      "title": "Palace Path",
+      "type": "string",
+      "description": "Path to the palace directory",
+      "default": "~/.mempalace/palace"
+    },
+    "startup_wing": {
+      "title": "Startup Wing",
+      "type": "string",
+      "description": "Wing used for session-start wake-up context",
+      "default": "claude"
+    },
+    "save_interval": {
+      "title": "Save Interval",
+      "type": "number",
+      "description": "Human messages between save triggers",
+      "default": 15
+    }
+  },
+  "author": {
+    "name": "milla-jovovich"
+  },
+  "homepage": "https://github.com/milla-jovovich/mempalace",
+  "repository": "https://github.com/milla-jovovich/mempalace",
+  "license": "MIT"
+}

@@ -417,7 +417,7 @@ claude mcp add mempalace -- python -m mempalace.mcp_server
 
 Claude Code now has an official plugin system, so MemPalace can be installed without hand-editing `~/.claude.json` or `settings.local.json`.
 
-For local development of this repo:
+The installable package lives under `plugins/claude/mempalace/`. That is the tree Claude copies into its plugin cache.
 
 ```bash
 claude plugin marketplace add /absolute/path/to/mempalace
@@ -426,9 +426,18 @@ claude plugin install mempalace@mempalace-dev --scope local
 
 That standard plugin install picks up:
 
-- `.mcp.json` for the `mempalace` MCP server
-- `hooks/hooks.json` for `SessionStart`, `Stop`, and `PreCompact`
-- `scripts/plugin-*.sh` wrappers that bootstrap a Python runtime in Claude's plugin data directory
+- `plugins/claude/mempalace/.claude-plugin/plugin.json` for install metadata and `userConfig`
+- `plugins/claude/mempalace/.mcp.json` for the `mempalace` MCP server
+- `plugins/claude/mempalace/hooks/hooks.json` for `SessionStart`, `Stop`, and `PreCompact`
+- `plugins/claude/mempalace/scripts/plugin-*.sh` wrappers that bootstrap a Python runtime in Claude's plugin data directory
+
+If the plugin is acting up, run:
+
+```bash
+bash plugins/claude/mempalace/scripts/plugin-doctor.sh
+```
+
+If you need to reset a bad runtime, delete `~/.claude/plugins/data/mempalace/` and reinstall. The packaged `plugins/claude/mempalace/README.md` has the same recovery path.
 
 To remove the plugin later:
 
