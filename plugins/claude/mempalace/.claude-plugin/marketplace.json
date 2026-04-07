@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "mempalace",
-      "source": "./plugins/claude/mempalace",
+      "source": "./",
       "description": "Project memory for Claude Code with MemPalace MCP and lifecycle hooks."
     }
   ]
