@@ -1,0 +1,32 @@
+{
+  "name": "mempalace",
+  "version": "3.1.2",
+  "description": "Project memory for Codex with MemPalace's local MCP server and startup guidance.",
+  "author": {
+    "name": "milla-jovovich"
+  },
+  "homepage": "https://github.com/milla-jovovich/mempalace",
+  "repository": "https://github.com/milla-jovovich/mempalace",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "memory",
+    "mcp",
+    "agent",
+    "productivity"
+  ],
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "MemPalace",
+    "shortDescription": "Local memory for Codex",
+    "longDescription": "Packages MemPalace as a Codex plugin with a local MCP server and startup guidance.",
+    "developerName": "milla-jovovich",
+    "category": "Productivity",
+    "defaultPrompt": [
+      "Use MemPalace before changing code when prior decisions might matter.",
+      "Use MemPalace to capture durable decisions, debugging notes, and checkpoint context."
+    ],
+    "brandColor": "#1f6feb",
+    "logo": "./assets/mempalace_logo.png"
+  }
+}
