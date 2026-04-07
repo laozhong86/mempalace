@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_BIN="$("$SCRIPT_DIR/plugin-bootstrap.sh")"
+MEMPALACE_BIN="$(dirname "$PYTHON_BIN")/mempalace"
+
+if [[ -n "${CLAUDE_PLUGIN_OPTION_PALACE_PATH:-}" ]]; then
+  export MEMPALACE_PALACE_PATH="$CLAUDE_PLUGIN_OPTION_PALACE_PATH"
+fi
+
+export MEMPALACE_STATE_DIR="${MEMPALACE_STATE_DIR:-${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins-data/mempalace}/hook-state}"
+export MEMPALACE_SAVE_INTERVAL="${MEMPALACE_SAVE_INTERVAL:-${CLAUDE_PLUGIN_OPTION_SAVE_INTERVAL:-10}}"
+export MEMPALACE_STARTUP_WING="${MEMPALACE_STARTUP_WING:-${CLAUDE_PLUGIN_OPTION_STARTUP_WING:-claude}}"
+export MEMPALACE_BIN_OVERRIDE="$MEMPALACE_BIN"
+export PATH="$(dirname "$PYTHON_BIN"):$PATH"

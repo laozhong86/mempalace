@@ -29,3 +29,30 @@ def test_empty():
     result = normalize(f.name)
     assert result.strip() == ""
     os.unlink(f.name)
+
+
+def test_codex_archived_jsonl():
+    entries = [
+        {
+            "timestamp": "2026-04-07T05:27:53.356Z",
+            "type": "event_msg",
+            "payload": {"type": "user_message", "message": "How do I import Codex chats?"},
+        },
+        {
+            "timestamp": "2026-04-07T05:27:54.356Z",
+            "type": "response_item",
+            "payload": {
+                "type": "message",
+                "role": "assistant",
+                "content": [{"type": "output_text", "text": "Use the archived session JSONL files."}],
+            },
+        },
+    ]
+    f = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
+    for entry in entries:
+        f.write(json.dumps(entry) + "\n")
+    f.close()
+    result = normalize(f.name)
+    assert "> How do I import Codex chats?" in result
+    assert "Use the archived session JSONL files." in result
+    os.unlink(f.name)

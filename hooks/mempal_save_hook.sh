@@ -52,8 +52,8 @@
 #
 # === CONFIGURATION ===
 
-SAVE_INTERVAL=15  # Save every N human messages (adjust to taste)
-STATE_DIR="$HOME/.mempalace/hook_state"
+SAVE_INTERVAL="${MEMPALACE_SAVE_INTERVAL:-10}"  # Save every N human messages (adjust to taste)
+STATE_DIR="${MEMPALACE_STATE_DIR:-$HOME/.mempalace/hook_state}"
 mkdir -p "$STATE_DIR"
 
 # Optional: set to the directory you want auto-ingested on each save trigger.
@@ -134,7 +134,7 @@ if [ "$SINCE_LAST" -ge "$SAVE_INTERVAL" ] && [ "$EXCHANGE_COUNT" -gt 0 ]; then
     cat << 'HOOKJSON'
 {
   "decision": "block",
-  "reason": "AUTO-SAVE checkpoint. Save key topics, decisions, quotes, and code from this session to your memory system. Organize into appropriate categories. Use verbatim quotes where possible. Continue conversation after saving."
+  "reason": "AUTO-SAVE checkpoint. Use MemPalace tools now. Write one concise mempalace_diary_write entry for this session. If you learned or changed a durable fact, use mempalace_kg_add or mempalace_kg_invalidate. If a short verbatim snippet matters later, save it with mempalace_add_drawer. Do not re-import the whole transcript. Continue the conversation after saving."
 }
 HOOKJSON
 else

@@ -70,9 +70,18 @@ def search(query: str, palace_path: str, wing: str = None, room: str = None, n_r
         source = Path(meta.get("source_file", "?")).name
         wing_name = meta.get("wing", "?")
         room_name = meta.get("room", "?")
+        project = meta.get("project", "")
+        source_system = meta.get("source_system", "")
 
         print(f"  [{i}] {wing_name} / {room_name}")
         print(f"      Source: {source}")
+        if project or source_system:
+            parts = []
+            if project:
+                parts.append(f"project={project}")
+            if source_system:
+                parts.append(f"source_system={source_system}")
+            print(f"      Meta:   {' | '.join(parts)}")
         print(f"      Match:  {similarity}")
         print()
         # Print the verbatim text, indented
@@ -130,6 +139,9 @@ def search_memories(
                 "text": doc,
                 "wing": meta.get("wing", "unknown"),
                 "room": meta.get("room", "unknown"),
+                "project": meta.get("project", ""),
+                "source_system": meta.get("source_system", ""),
+                "session_id": meta.get("session_id", ""),
                 "source_file": Path(meta.get("source_file", "?")).name,
                 "similarity": round(1 - dist, 3),
             }

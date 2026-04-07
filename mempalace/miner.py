@@ -398,16 +398,18 @@ def status(palace_path: str):
         print("  Run: mempalace init <dir> then mempalace mine <dir>")
         return
 
-    # Count by wing and room
-    r = col.get(limit=10000, include=["metadatas"])
-    metas = r["metadatas"]
+    total_drawers = col.count()
 
     wing_rooms = defaultdict(lambda: defaultdict(int))
-    for m in metas:
-        wing_rooms[m.get("wing", "?")][m.get("room", "?")] += 1
+    batch_size = 5000
+    for offset in range(0, total_drawers, batch_size):
+        r = col.get(offset=offset, limit=batch_size, include=["metadatas"])
+        metas = r["metadatas"]
+        for m in metas:
+            wing_rooms[m.get("wing", "?")][m.get("room", "?")] += 1
 
     print(f"\n{'=' * 55}")
-    print(f"  MemPalace Status — {len(metas)} drawers")
+    print(f"  MemPalace Status — {total_drawers} drawers")
     print(f"{'=' * 55}\n")
     for wing, rooms in sorted(wing_rooms.items()):
         print(f"  WING: {wing}")

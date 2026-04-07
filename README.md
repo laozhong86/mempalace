@@ -89,6 +89,8 @@ Now your AI has 19 tools available through MCP. Ask it anything:
 
 Claude calls `mempalace_search` automatically, gets verbatim results, and answers you. You never type `mempalace search` again. The AI handles it.
 
+If you want a repeatable Claude import that only keeps chat transcripts, use `scripts/import_claude_jsonl.sh`. It filters the source tree down to `*.jsonl` files before calling the existing conversation miner.
+
 ### With local models (Llama, Mistral, or any offline LLM)
 
 Local models generally don't speak MCP yet. Two approaches:
@@ -409,6 +411,29 @@ Letta charges $20–200/mo for agent-managed memory. MemPalace does it with a wi
 
 ```bash
 claude mcp add mempalace -- python -m mempalace.mcp_server
+```
+
+### Claude Code Plugin
+
+Claude Code now has an official plugin system, so MemPalace can be installed without hand-editing `~/.claude.json` or `settings.local.json`.
+
+For local development of this repo:
+
+```bash
+claude plugin marketplace add /absolute/path/to/mempalace
+claude plugin install mempalace@mempalace-dev --scope local
+```
+
+That standard plugin install picks up:
+
+- `.mcp.json` for the `mempalace` MCP server
+- `hooks/hooks.json` for `SessionStart`, `Stop`, and `PreCompact`
+- `scripts/plugin-*.sh` wrappers that bootstrap a Python runtime in Claude's plugin data directory
+
+To remove the plugin later:
+
+```bash
+claude plugin uninstall mempalace@mempalace-dev --scope local
 ```
 
 ### 19 Tools

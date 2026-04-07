@@ -46,7 +46,7 @@
 # Set MEMPAL_DIR below if you want the hook to auto-ingest before compaction.
 # Leave blank to rely on the AI's own save instructions.
 
-STATE_DIR="$HOME/.mempalace/hook_state"
+STATE_DIR="${MEMPALACE_STATE_DIR:-$HOME/.mempalace/hook_state}"
 mkdir -p "$STATE_DIR"
 
 # Optional: set to the directory you want auto-ingested before compaction.
@@ -72,6 +72,6 @@ fi
 cat << 'HOOKJSON'
 {
   "decision": "block",
-  "reason": "COMPACTION IMMINENT. Save ALL topics, decisions, quotes, code, and important context from this session to your memory system. Be thorough — after compaction, detailed context will be lost. Organize into appropriate categories. Use verbatim quotes where possible. Save everything, then allow compaction to proceed."
+  "reason": "COMPACTION IMMINENT. Use MemPalace tools before context is compressed. Write a thorough mempalace_diary_write entry for the session. Persist any durable facts with mempalace_kg_add or mempalace_kg_invalidate. Save only essential verbatim snippets with mempalace_add_drawer. Do not re-import the transcript. Save first, then allow compaction to proceed."
 }
 HOOKJSON

@@ -7,6 +7,7 @@ Supported:
     - Claude.ai JSON export
     - ChatGPT conversations.json
     - Claude Code JSONL
+    - Codex archived session JSONL
     - Slack JSON export
     - Plain text (pass through for paragraph chunking)
 
@@ -51,6 +52,10 @@ def normalize(filepath: str) -> str:
 def _try_normalize_json(content: str) -> Optional[str]:
     """Try all known JSON chat schemas."""
 
+    normalized = _try_codex_archived_jsonl(content)
+    if normalized:
+        return normalized
+
     normalized = _try_claude_code_jsonl(content)
     if normalized:
         return normalized
@@ -65,6 +70,47 @@ def _try_normalize_json(content: str) -> Optional[str]:
         if normalized:
             return normalized
 
+    return None
+
+
+def _try_codex_archived_jsonl(content: str) -> Optional[str]:
+    """Codex archived session JSONL."""
+    lines = [line.strip() for line in content.strip().split("\n") if line.strip()]
+    messages = []
+
+    for line in lines:
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(entry, dict):
+            continue
+
+        if entry.get("type") == "event_msg":
+            payload = entry.get("payload", {})
+            if isinstance(payload, dict) and payload.get("type") == "user_message":
+                text = payload.get("message", "").strip()
+                if text:
+                    messages.append(("user", text))
+            continue
+
+        if entry.get("type") != "response_item":
+            continue
+
+        payload = entry.get("payload", {})
+        if not isinstance(payload, dict) or payload.get("type") != "message":
+            continue
+
+        role = payload.get("role", "")
+        if role != "assistant":
+            continue
+
+        text = _extract_content(payload.get("content", ""))
+        if text:
+            messages.append(("assistant", text))
+
+    if len(messages) >= 2:
+        return _messages_to_transcript(messages)
     return None
 
 
@@ -198,7 +244,7 @@ def _extract_content(content) -> str:
         for item in content:
             if isinstance(item, str):
                 parts.append(item)
-            elif isinstance(item, dict) and item.get("type") == "text":
+            elif isinstance(item, dict) and item.get("type") in ("text", "output_text", "input_text"):
                 parts.append(item.get("text", ""))
         return " ".join(parts).strip()
     if isinstance(content, dict):

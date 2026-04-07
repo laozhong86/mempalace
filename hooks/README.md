@@ -6,6 +6,7 @@ These hook scripts make MemPalace save automatically. No manual "save" commands 
 
 | Hook | When It Fires | What Happens |
 |------|--------------|-------------|
+| **SessionStart Hook** | On startup / clear / compact | Injects wake-up context + workflow guidance into Claude |
 | **Save Hook** | Every 15 human messages | Blocks the AI, tells it to save key topics/decisions/quotes to the palace |
 | **PreCompact Hook** | Right before context compaction | Emergency save — forces the AI to save EVERYTHING before losing context |
 
@@ -18,6 +19,14 @@ Add to `.claude/settings.local.json`:
 ```json
 {
   "hooks": {
+    "SessionStart": [{
+      "matcher": "startup|clear|compact",
+      "hooks": [{
+        "type": "command",
+        "command": "/absolute/path/to/hooks/mempal_session_start_hook.sh",
+        "timeout": 30
+      }]
+    }],
     "Stop": [{
       "matcher": "*",
       "hooks": [{
@@ -39,7 +48,7 @@ Add to `.claude/settings.local.json`:
 
 Make them executable:
 ```bash
-chmod +x hooks/mempal_save_hook.sh hooks/mempal_precompact_hook.sh
+chmod +x hooks/mempal_session_start_hook.sh hooks/mempal_save_hook.sh hooks/mempal_precompact_hook.sh
 ```
 
 ## Install — Codex CLI (OpenAI)
@@ -63,8 +72,9 @@ Add to `.codex/hooks.json`:
 
 ## Configuration
 
-Edit `mempal_save_hook.sh` to change:
+Edit `mempal_session_start_hook.sh` and `mempal_save_hook.sh` to change:
 
+- **`MEMPALACE_STARTUP_WING`** — Optional. Which wing to use for `wake-up` context on session start. Defaults to `claude`.
 - **`SAVE_INTERVAL=15`** — How many human messages between saves. Lower = more frequent saves, higher = less interruption.
 - **`STATE_DIR`** — Where hook state is stored (defaults to `~/.mempalace/hook_state/`)
 - **`MEMPAL_DIR`** — Optional. Set to a conversations directory to auto-run `mempalace mine <dir>` on each save trigger. Leave blank (default) to let the AI handle saving via the block reason message.
@@ -81,6 +91,18 @@ mempalace mine <dir> --mode convos # Mine conversation transcripts only
 The hooks resolve the repo root automatically from their own path, so they work regardless of where you install the repo.
 
 ## How It Works (Technical)
+
+### SessionStart Hook
+
+```
+Claude Code starts session → SessionStart hook runs
+                                ↓
+                    Hook calls `mempalace wake-up --wing ...`
+                                ↓
+                Hook injects wake-up text + workflow instructions
+                                ↓
+                 Claude starts with the current memory baseline
+```
 
 ### Save Hook (Stop event)
 

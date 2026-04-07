@@ -1,0 +1,16 @@
+{
+  "name": "mempalace-dev",
+  "owner": {
+    "name": "milla-jovovich"
+  },
+  "metadata": {
+    "description": "Local development marketplace for the MemPalace Claude Code plugin."
+  },
+  "plugins": [
+    {
+      "name": "mempalace",
+      "source": "./",
+      "description": "Project memory for Claude Code with MemPalace MCP and lifecycle hooks."
+    }
+  ]
+}

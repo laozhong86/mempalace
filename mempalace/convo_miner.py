@@ -257,6 +257,7 @@ def mine_convos(
     limit: int = 0,
     dry_run: bool = False,
     extract_mode: str = "exchange",
+    metadata_overrides: dict = None,
 ):
     """Mine a directory of conversation files into the palace.
 
@@ -353,22 +354,25 @@ def mine_convos(
             if extract_mode == "general":
                 room_counts[chunk_room] += 1
             drawer_id = f"drawer_{wing}_{chunk_room}_{hashlib.md5((source_file + str(chunk['chunk_index'])).encode()).hexdigest()[:16]}"
+            metadata = {
+                "wing": wing,
+                "room": chunk_room,
+                "source_file": source_file,
+                "source_name": filepath.name,
+                "session_id": filepath.stem,
+                "chunk_index": chunk["chunk_index"],
+                "added_by": agent,
+                "filed_at": datetime.now().isoformat(),
+                "ingest_mode": "convos",
+                "extract_mode": extract_mode,
+            }
+            if metadata_overrides:
+                metadata.update({k: v for k, v in metadata_overrides.items() if v is not None})
             try:
                 collection.add(
                     documents=[chunk["content"]],
                     ids=[drawer_id],
-                    metadatas=[
-                        {
-                            "wing": wing,
-                            "room": chunk_room,
-                            "source_file": source_file,
-                            "chunk_index": chunk["chunk_index"],
-                            "added_by": agent,
-                            "filed_at": datetime.now().isoformat(),
-                            "ingest_mode": "convos",
-                            "extract_mode": extract_mode,
-                        }
-                    ],
+                    metadatas=[metadata],
                 )
                 drawers_added += 1
             except Exception as e:

@@ -1,0 +1,11 @@
+{
+  "name": "mempalace",
+  "version": "3.1.2",
+  "description": "Project memory for Claude Code with MemPalace MCP, wake-up context, and save hooks.",
+  "author": {
+    "name": "milla-jovovich"
+  },
+  "homepage": "https://github.com/milla-jovovich/mempalace",
+  "repository": "https://github.com/milla-jovovich/mempalace",
+  "license": "MIT"
+}
