@@ -4,7 +4,7 @@
 
 MemPalace should be deliverable as a Codex plugin package that makes agent memory available with the shortest possible setup path.
 
-The plugin is not just a wrapper around existing scripts. It is the productized delivery surface for MemPalace:
+The plugin is the productized delivery surface for MemPalace:
 
 - install fast
 - work with minimal configuration
@@ -26,11 +26,11 @@ The plugin should ship with safe defaults. Any required manual step must be smal
 
 ### 2.3 One entry point
 
-Hooks, startup context, import flow, and repo guidance should be packaged as one unit rather than scattered across scripts and README files.
+Plugin manifest, startup prompt, MCP server config, import flow, and repo guidance should feel like one unit rather than scattered across scripts and README files.
 
 ### 2.4 Deterministic behavior
 
-Memory capture, startup context, and checkpointing should remain local, predictable, and easy to reason about. The plugin should not depend on hidden remote behavior.
+Memory capture, startup guidance, and checkpointing should remain local, predictable, and easy to reason about. The plugin should not depend on hidden remote behavior.
 
 ### 2.5 Easy verification
 
@@ -48,14 +48,14 @@ Agent work loses context in predictable places:
 MemPalace already solves the memory model. The missing piece is delivery:
 
 - the current experience requires too much manual assembly
-- installation knowledge is split across docs, hooks, and scripts
+- installation knowledge is split across docs, runtime scripts, and packaging metadata
 - the memory stack is not packaged as a product-level Codex extension
 
 ## 4. Goals
 
 - Make MemPalace installable as a Codex plugin package.
 - Reduce initial setup friction to the smallest practical sequence.
-- Provide sane defaults for hooks, startup context, and import flows.
+- Provide sane defaults for startup prompt, MCP wiring, and import flows.
 - Keep the install boundary separate from runtime behavior.
 - Make the plugin discoverable and updateable as one unit.
 
@@ -72,8 +72,8 @@ MemPalace already solves the memory model. The missing piece is delivery:
 The intended experience is:
 
 1. User installs the plugin.
-2. The plugin installs or links the minimal required MemPalace runtime pieces.
-3. The plugin enables Codex-facing hooks and startup context with defaults.
+2. Codex discovers the plugin through a marketplace entry and installs it into its cache.
+3. The plugin exposes MemPalace through bundled plugin metadata and the existing local MCP server.
 4. The user can immediately start working with memory support.
 5. The user can import existing conversations or project context later, without redoing setup.
 
@@ -89,7 +89,7 @@ The key outcome is that MemPalace feels like a ready-made capability, not a cust
 
 ### 7.2 Default configuration
 
-- The plugin must provide safe defaults for Codex-facing hooks.
+- The plugin must provide safe defaults for Codex-facing metadata and startup prompt.
 - The plugin must not require users to edit repository files for the first run.
 - Machine-specific values must stay outside the shared package or be generated at install time.
 
@@ -97,10 +97,11 @@ The key outcome is that MemPalace feels like a ready-made capability, not a cust
 
 - The plugin must provide a startup or wake-up path that gives Codex the current memory baseline.
 - The startup context must point to the same Palace concepts used by the core repository.
+- The startup prompt should be installable metadata, not a hand-edited local config.
 
 ### 7.4 Memory capture
 
-- The plugin must preserve the current save and pre-compact behaviors.
+- The plugin must preserve the current save and pre-compact behaviors in the underlying repo.
 - The plugin must keep checkpoint behavior deterministic.
 - The plugin must not re-import full transcripts when a smaller checkpoint is enough.
 
@@ -122,14 +123,15 @@ The plugin package should keep concerns separated.
 ### 8.1 Package boundary
 
 - Plugin manifest: source of truth for installable metadata.
-- Runtime hooks: deterministic local scripts.
+- Marketplace entry: source of discovery for local or shared installs.
+- Runtime MCP config: deterministic local scripts.
 - Repository guidance: docs and reference material.
 - Import tools: scripts that can be called after install.
 
 ### 8.2 What belongs in the plugin
 
 - Codex-facing metadata
-- hook wiring
+- MCP wiring
 - startup context entry point
 - versioned package information
 - install-time defaults
@@ -188,23 +190,22 @@ The plugin is also successful if it increases:
 - The plugin story can be explained in one short paragraph.
 - A new user can identify the install path without reading multiple docs.
 - The plugin has a clear package boundary and a clear runtime boundary.
-- The existing hooks and import flow still work as the underlying implementation.
+- The existing import flow and MCP server still work as the underlying implementation.
 - The package supports versioned updates.
 - The repo has a written spec that can be used to implement the plugin without re-deciding the product shape.
 
 ## 13. Open Questions
 
-- What exact packaging format will Codex use for the plugin surface in this repo?
+- Which manifest fields should we keep in the repo-local package versus generating at install time?
 - Which parts of the install can be automated safely on first run?
 - How much of the startup context should be generated versus committed?
 - What compatibility guarantees should the plugin make across future Codex versions?
 
 ## 14. Next Implementation Slice
 
-The next concrete step is to turn this spec into a plugin package plan:
+The next concrete step is to keep the package and validation contract aligned:
 
 - define the file layout
 - define the install command path
 - define the generated defaults
 - define the validation check after install
-

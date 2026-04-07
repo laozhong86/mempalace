@@ -29,7 +29,9 @@ def test_convo_mining():
 def test_convo_mining_with_metadata_overrides():
     tmpdir = tempfile.mkdtemp()
     with open(os.path.join(tmpdir, "chat.txt"), "w") as f:
-        f.write("> Why did we keep wing project-only?\nTo keep source separate from the main project partition.\n")
+        f.write(
+            "> Why did we keep wing project-only?\nTo keep source separate from the main project partition.\n"
+        )
 
     palace_path = os.path.join(tmpdir, "palace")
     mine_convos(

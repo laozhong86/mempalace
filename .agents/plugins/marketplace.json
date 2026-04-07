@@ -1,0 +1,18 @@
+{
+  "name": "mempalace-dev",
+  "owner": {
+    "name": "milla-jovovich"
+  },
+  "metadata": {
+    "description": "Local development marketplace for the MemPalace Codex plugin."
+  },
+  "plugins": [
+    {
+      "name": "mempalace",
+      "source": {
+        "path": "../../"
+      },
+      "description": "Project memory for Codex with MemPalace's local MCP server and startup guidance."
+    }
+  ]
+}
