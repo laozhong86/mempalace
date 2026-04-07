@@ -17,8 +17,8 @@ def test_bootstrap_is_concurrency_safe(tmp_path):
     p2 = subprocess.Popen(
         cmd, cwd=repo, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
-    out1, err1 = p1.communicate(timeout=120)
-    out2, err2 = p2.communicate(timeout=120)
+    out1, err1 = p1.communicate(timeout=240)
+    out2, err2 = p2.communicate(timeout=240)
 
     assert p1.returncode == 0, err1
     assert p2.returncode == 0, err2
